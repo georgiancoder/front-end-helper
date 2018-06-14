@@ -34,6 +34,9 @@ function createWindow(){
 function About(){
 	aboutWindow = new BrowserWindow({parent: 'top', modal: true, width: 300, height: 300, frame: false});
 	aboutWindow.setMenuBarVisibility(false);
+	aboutWindow.on('blur',()=>{
+		aboutWindow.close();
+	})
 }
 
 function closeApp(){
