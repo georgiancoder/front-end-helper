@@ -1,0 +1,15 @@
+*{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	-webkit-user-select: none;
+}
+body{
+	display: flex;
+	background-color: #F7F7F7;
+}
+aside{
+	background-color: red;
+	width: 30%;
+	height: 100%;
+}

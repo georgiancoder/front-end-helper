@@ -1,8 +1,11 @@
 const { app, BrowserWindow, Menu, MenuItem } = require('electron');
 
-function createWindow(){
-	let win = new BrowserWindow();
+let mainWindow;
+let aboutWindow;
 
+function createWindow(){
+	
+	mainWindow = new BrowserWindow();
 	const menuTemplate = [
 		{
 			label: 'File',
@@ -14,14 +17,27 @@ function createWindow(){
 		{
 			label: 'Help',
 			submenu: [
-				{label: 'About'}
+				{label: 'About', click() { About(); }}
 			]
 		}
 	];
 
 	let menu = Menu.buildFromTemplate(menuTemplate);
 
-	win.setMenu(menu);
+	mainWindow.setMenu(menu);
+
+	mainWindow.loadURL(`file://${__dirname}/views/index.html`);
+	mainWindow.on('close',closeApp);
+}
+
+
+function About(){
+	aboutWindow = new BrowserWindow({parent: 'top', modal: true, width: 300, height: 300, frame: false});
+	aboutWindow.setMenuBarVisibility(false);
+}
+
+function closeApp(){
+	aboutWindow.close();
 }
 
 app.on('ready',createWindow);
