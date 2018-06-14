@@ -1,0 +1,28 @@
+{
+  "name": "front_end_helper",
+  "version": "1.0.0",
+  "description": "Font-End helper tool",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/georgiancoder/front-end-helper.git"
+  },
+  "keywords": [
+    "scss",
+    "html",
+    "css"
+  ],
+  "author": "geocoder",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/georgiancoder/front-end-helper/issues"
+  },
+  "homepage": "https://github.com/georgiancoder/front-end-helper#readme",
+  "devDependencies": {
+    "electron": "^2.0.2"
+  }
+}
