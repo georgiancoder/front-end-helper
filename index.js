@@ -45,7 +45,13 @@ function newProject() {
     let projectfolder = dialog.showOpenDialog({ properties: ['openDirectory', 'multiSelections'] })
     let fileList = [];
     readDirectory(projectfolder[0], fileList);
-    console.log(fileList.length);
+    fileList = fileList.filter((item)=>{
+        if(item.match(/[^.]*$/)[0] == "html"){
+            return item;
+        }
+    });
+
+    console.log(fileList);
 }
 
 function readDirectory(path, list) {
