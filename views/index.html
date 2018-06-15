@@ -1,14 +1,43 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>app</title>
-	<link rel="stylesheet" type="text/css" href="../css/main.css">
+    <title>app</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
 </head>
+
 <body>
-	<aside>
-		<header>
-			<h3>Projects</h3>
-		</header>
-	</aside>
+    <aside>
+        <header>
+            <h3>Projects</h3>
+            <ul id="projects">
+            </ul>
+        </header>
+    </aside>
+    <script>
+    const fs = require('fs');
+    let projects = fs.readFileSync('./projects.json').toString();
+    projects = projects.length > 0 ? JSON.parse(projects) : []
+    listProjects();
+
+    StartWatcher('./projects.json');
+
+    function listProjects() {
+        let projectsHtml = '';
+        projects.forEach(project => {
+            projectsHtml += `<li>${project.name}</li>`;
+        });
+        document.getElementById('projects').innerHTML = projectsHtml;
+    }
+
+    function StartWatcher(path) {
+
+        fs.watchFile(path, function() {
+            projects = fs.readFileSync(path).toString().length > 0 ? JSON.parse(fs.readFileSync(path)) : [];
+      		listProjects();
+        });
+    }
+    </script>
 </body>
+
 </html>

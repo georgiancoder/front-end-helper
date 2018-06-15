@@ -4,9 +4,12 @@ const fs = require('fs');
 let mainWindow;
 let aboutWindow;
 
+let projectList = [];
+
 function createWindow() {
 
     mainWindow = new BrowserWindow();
+    // mainWindow.webContents.openDevTools();
     const menuTemplate = [{
             label: 'File',
             submenu: [
@@ -43,30 +46,49 @@ function About() {
 function newProject() {
     let projectfolder = dialog.showOpenDialog({ properties: ['openDirectory'] })
     let fileList = [];
-    createMainConfig(projectfolder[0]);
-    readDirectory(projectfolder[0], fileList);
-    fileList = fileList.filter((item)=>{
-        if(item.match(/[^.]*$/)[0] == "html"){
-            return item;
-        }
-    });
-
-    console.log(fileList);
+    if (projectfolder) {
+        createMainConfig(projectfolder[0]);
+        readDirectory(projectfolder[0], fileList);
+        fileList = fileList.filter((item) => {
+            if (item.match(/[^.]*$/)[0] == "html") {
+                return item;
+            }
+        });
+    }
 }
 
-function createMainConfig(path){
+function createMainConfig(path) {
     let directoryName = path.match(/[^\\]*$/)[0];
     let projectsConfig = `projects.json`;
-    if(fs.existsSync(projectsConfig)){
-        console.log('faili arsebobs');
+    if (fs.existsSync(projectsConfig)) {
+        projectList = fs.readFileSync(projectsConfig).toString();
+        projectList = projectList.length>0 ? JSON.parse(projectList) : [];   
+        if (isInProjects(projectList, path)) {
+            dialog.showMessageBox({message: 'Project already exists!'});
+        } else {
+            projectList.push({
+                "name": directoryName,
+                "path": path
+            });
+            fs.writeFileSync(projectsConfig, JSON.stringify(projectList));
+        }
     } else {
-        let projects = [];
-        projects.push({
+        projectList.push({
             "name": directoryName,
             "path": path
         });
-        fs.writeFileSync(projectsConfig,JSON.stringify(projects));
+        fs.writeFileSync(projectsConfig, JSON.stringify(projectList));
     }
+}
+
+function isInProjects(projects, path) {
+    let is = false;
+    projects.forEach(project => {
+        if (path.indexOf(project.path) >= 0) {
+            is = true;
+        }
+    });
+    return is;
 }
 
 function readDirectory(path, list) {
@@ -83,7 +105,9 @@ function readDirectory(path, list) {
 }
 
 function closeApp() {
-    aboutWindow.close();
+    if(aboutWindow){
+        aboutWindow.close();    
+    }
 }
 
 app.on('ready', createWindow);
