@@ -3,7 +3,6 @@ const fs = require('fs');
 
 let mainWindow;
 let aboutWindow;
-let newProjectWindow;
 
 function createWindow() {
 
@@ -42,8 +41,9 @@ function About() {
 }
 
 function newProject() {
-    let projectfolder = dialog.showOpenDialog({ properties: ['openDirectory', 'multiSelections'] })
+    let projectfolder = dialog.showOpenDialog({ properties: ['openDirectory'] })
     let fileList = [];
+    createMainConfig(projectfolder[0]);
     readDirectory(projectfolder[0], fileList);
     fileList = fileList.filter((item)=>{
         if(item.match(/[^.]*$/)[0] == "html"){
@@ -52,6 +52,21 @@ function newProject() {
     });
 
     console.log(fileList);
+}
+
+function createMainConfig(path){
+    let directoryName = path.match(/[^\\]*$/)[0];
+    let projectsConfig = `projects.json`;
+    if(fs.existsSync(projectsConfig)){
+        console.log('faili arsebobs');
+    } else {
+        let projects = [];
+        projects.push({
+            "name": directoryName,
+            "path": path
+        });
+        fs.writeFileSync(projectsConfig,JSON.stringify(projects));
+    }
 }
 
 function readDirectory(path, list) {
