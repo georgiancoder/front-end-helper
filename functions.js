@@ -43,7 +43,12 @@ class Functions {
     }
 
     readFiles(files){
-        console.log(files);
+        var regex = /<body[^>]*>((.|[\n\r])*)<\/body>/g;
+        files.forEach(file=>{
+            let fileContent = fs.readFileSync(file).toString();
+            let fileBody = fileContent.match(regex)[0];
+            console.log(fileBody);
+        });
     }
 
     isInProjects(projects, path) {
