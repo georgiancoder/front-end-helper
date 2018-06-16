@@ -1,5 +1,6 @@
-const { app, BrowserWindow, Menu, MenuItem, dialog } = require('electron');
+const { app, BrowserWindow, Menu, MenuItem } = require('electron');
 const fs = require('fs');
+const Functions = require('./functions');
 
 let mainWindow;
 let aboutWindow;
@@ -13,7 +14,7 @@ function createWindow() {
     const menuTemplate = [{
             label: 'File',
             submenu: [
-                { label: 'New Project', click() { newProject() } },
+                { label: 'New Project', click() { Functions.newProject(projectList) } },
                 { label: 'Exit', role: 'close' }
             ]
         },
@@ -30,7 +31,7 @@ function createWindow() {
     mainWindow.setMenu(menu);
 
     mainWindow.loadURL(`file://${__dirname}/views/index.html`);
-    mainWindow.on('close', closeApp);
+    mainWindow.on('close', Functions.closeApp);
 }
 
 
@@ -43,71 +44,5 @@ function About() {
     })
 }
 
-function newProject() {
-    let projectfolder = dialog.showOpenDialog({ properties: ['openDirectory'] })
-    let fileList = [];
-    if (projectfolder) {
-        createMainConfig(projectfolder[0]);
-        readDirectory(projectfolder[0], fileList);
-        fileList = fileList.filter((item) => {
-            if (item.match(/[^.]*$/)[0] == "html") {
-                return item;
-            }
-        });
-    }
-}
-
-function createMainConfig(path) {
-    let directoryName = path.match(/[^\\]*$/)[0];
-    let projectsConfig = `projects.json`;
-    if (fs.existsSync(projectsConfig)) {
-        projectList = fs.readFileSync(projectsConfig).toString();
-        projectList = projectList.length>0 ? JSON.parse(projectList) : [];   
-        if (isInProjects(projectList, path)) {
-            dialog.showMessageBox({message: 'Project already exists!'});
-        } else {
-            projectList.push({
-                "name": directoryName,
-                "path": path
-            });
-            fs.writeFileSync(projectsConfig, JSON.stringify(projectList));
-        }
-    } else {
-        projectList.push({
-            "name": directoryName,
-            "path": path
-        });
-        fs.writeFileSync(projectsConfig, JSON.stringify(projectList));
-    }
-}
-
-function isInProjects(projects, path) {
-    let is = false;
-    projects.forEach(project => {
-        if (path.indexOf(project.path) >= 0) {
-            is = true;
-        }
-    });
-    return is;
-}
-
-function readDirectory(path, list) {
-    let files = fs.readdirSync(path);
-    files.forEach((file) => {
-        let filePath = `${path}\\${file}`;
-        let fileStat = fs.lstatSync(filePath);
-        if (fileStat.isDirectory()) {
-            readDirectory(filePath, list);
-        } else {
-            list.push(filePath);
-        }
-    });
-}
-
-function closeApp() {
-    if(aboutWindow){
-        aboutWindow.close();    
-    }
-}
 
 app.on('ready', createWindow);
