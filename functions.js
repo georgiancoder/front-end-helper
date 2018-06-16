@@ -13,6 +13,7 @@ class Functions {
                     return item;
                 }
             });
+            this.readFiles(fileList);
         }
     }
 
@@ -39,6 +40,10 @@ class Functions {
             });
             fs.writeFileSync(projectsConfig, JSON.stringify(projectList));
         }
+    }
+
+    readFiles(files){
+        console.log(files);
     }
 
     isInProjects(projects, path) {
