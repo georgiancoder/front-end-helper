@@ -43,10 +43,12 @@ class Functions {
     }
 
     readFiles(files){
-        var regex = /<body[^>]*>((.|[\n\r])*)<\/body>/g;
+        let regex = /<body[^>]*>((.|[\n\r])*)<\/body>/g;
+        let commentsRegex = /<!--[\s\S]*?-->/gm;
         files.forEach(file=>{
             let fileContent = fs.readFileSync(file).toString();
             let fileBody = fileContent.match(regex)[0];
+            fileBody = fileBody.replace(commentsRegex,'');
             console.log(fileBody);
         });
     }
@@ -74,7 +76,7 @@ class Functions {
         });
     }
 
-    closeApp() {
+    closeApp(aboutWindow) {
         if(aboutWindow){
             aboutWindow.close();
         }

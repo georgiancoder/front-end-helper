@@ -31,7 +31,9 @@ function createWindow() {
     mainWindow.setMenu(menu);
 
     mainWindow.loadURL(`file://${__dirname}/views/index.html`);
-    mainWindow.on('close', Functions.closeApp);
+    mainWindow.on('close', ()=>{
+        Functions.closeApp(aboutWindow);
+    });
 }
 
 
